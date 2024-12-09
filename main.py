@@ -14,12 +14,18 @@ def send_mail(mes_to: str, code: any):
     smtp.starttls()
     smtp.login(config.address, config.password)
     code = str(code)
-    smtp.sendmail(config.address, mes_to, code)
-    smtp.quit()
+    try:
+        smtp.sendmail(config.address, mes_to, code)
+    except smtplib.SMTPException as e:
+        print(f"Error sending email {e}")
+        raise ValueError(f"Failed to send email {mes_to}")
 
 
 @app.get("/")
 def read_root(adr: str = 'default'):
-    code = random.randint(100000, 999999)
-    send_mail(adr, code)
-    return {"adrs" : adr, "code" : code}
+    try:
+        code = random.randint(100000, 999999)
+        send_mail(adr, code)
+        return {'status' : 'sent', 'code' : code}
+    except ValueError as e:
+        return {'status':'error during sending','error': str(e)}
