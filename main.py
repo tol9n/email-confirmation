@@ -22,10 +22,10 @@ def send_mail(mes_to: str, code: any):
 
 
 @app.get("/")
-def read_root(adr: str = 'default'):
+def read_root(target: str = 'default'):
     try:
         code = random.randint(100000, 999999)
-        send_mail(adr, code)
+        send_mail(target, code)
         return {'status' : 'sent', 'code' : code}
     except ValueError as e:
         return {'status':'error during sending','error': str(e)}
